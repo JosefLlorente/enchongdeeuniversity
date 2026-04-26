@@ -43,7 +43,7 @@ export default function Home() {
           <InputField onSubmit={setSubmittedData} />
         </div>
         {/* Output Section */}
-        <div className="w-full flex justify-center lg:justify-start overflow-visible">
+        <div className="w-full flex justify-center lg:justify-start overflow-visible lg:mb-10">
           <div className="relative origin-top scale-[0.45] sm:scale-[0.6] md:scale-75 lg:scale-100 w-fit">
             <button
               disabled={!submittedData}
