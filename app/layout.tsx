@@ -45,6 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${geistSans.variable} ${geistMono.variable} ${crimson.variable} min-h-full flex flex-col`}>
+        <meta name="google-site-verification" content="wC6LYVUdInNmM8bVJHak82l0fMGlZaZQFbR-NwrtKDA" />
         {children}
         <Toaster/>
       </body>
