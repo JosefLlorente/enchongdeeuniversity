@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import { Geist, Geist_Mono, Crimson_Text } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script 
+        async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7740367060764218"
+        crossOrigin="anonymous">
+        </script>
+      </head>
       <body className={`${inter.className} ${geistSans.variable} ${geistMono.variable} ${crimson.variable} min-h-full flex flex-col`}>
         <meta name="google-site-verification" content="wC6LYVUdInNmM8bVJHak82l0fMGlZaZQFbR-NwrtKDA" />
         {children}
