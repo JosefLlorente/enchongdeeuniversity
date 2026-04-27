@@ -144,6 +144,7 @@ export default function InputField({
         <h2 className="font-medium">Profile Link</h2>
         <Input placeholder="Enter your social media profile link" 
         value={payLoad.profileLink}
+        maxLength={42}
         onChange={(e) => setPayLoad({...payLoad, profileLink: e.target.value})}/>
       </div>
 
