@@ -66,7 +66,7 @@ export default function Template({ data }: { data: any }) {
                     </div>
                     
                     {/* Role*/}
-                    <div className="bg-[#0A326D] text-white text-center pl-8 py-3 rounded-r-md mt-10 -ml-10 w-[calc(100%+2.5rem)]">
+                    <div className="bg-[#0A326D] text-white text-center pl-8 py-3 rounded-r-md mt-10 -ml-8 w-[calc(100%+2.5rem)]">
                     <h1 className="text-3xl font-bold tracking-[3px]">
                         {data?.applyAs?.toUpperCase() || "STUDENT"}
                     </h1>
