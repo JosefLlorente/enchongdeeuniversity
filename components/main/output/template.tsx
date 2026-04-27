@@ -46,7 +46,7 @@ export default function Template({ data }: { data: any }) {
     }, [data?.profileImage]);
 
     return (
-        <div className="bg-white flex flex-col rounded-xl">
+        <div className="bg-white flex flex-col rounded-xl shadow-md">
             <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl [font-family:var(--font-crimson)]">
                 <h1>ENCHONG DEE UNIVERSITY</h1>
             </header>

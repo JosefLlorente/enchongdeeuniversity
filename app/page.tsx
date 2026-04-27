@@ -45,15 +45,15 @@ export default function Home() {
         {/* Output Section */}
         <div className="w-full flex justify-center lg:justify-start overflow-visible lg:mb-10">
           <div className="relative origin-top scale-[0.45] sm:scale-[0.6] md:scale-75 lg:scale-100 w-fit">
-            <button
-              disabled={!submittedData}
-              className="absolute m-5 bg-white p-2 rounded shadow opacity-40 hover:opacity-100 transition-opacity z-10 pointer-events-auto"
-              onClick={() => downloadAsPNG("id-card", "id-card.png")}
-            >
-              <Download className="w-5 h-5" />
-            </button>
+          <button
+            disabled={!submittedData}
+            className="absolute m-6 sm:m-5 bg-white p-5 sm:p-3 rounded-lg shadow opacity-40 hover:opacity-100 transition-opacity z-10 pointer-events-auto"
+            onClick={() => downloadAsPNG("id-card", "id-card.png")}
+          >
+            <Download className="w-10 h-10 sm:w-5 sm:h-5" />
+          </button>
 
-            <div id="id-card">
+            <div id="id-card shadow-lg">
               <Template data={submittedData} />
             </div>
           </div>
