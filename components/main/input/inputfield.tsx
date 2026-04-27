@@ -43,7 +43,7 @@ export default function InputField({
         return
       }
 
-      onSubmit(payLoad)
+      onSubmit({ ...payLoad })
     }
 
   return (
@@ -76,7 +76,11 @@ export default function InputField({
             <SelectContent>
                 <SelectItem value="male">Male</SelectItem>
                 <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="bisexual">Bisexual</SelectItem>
+                <SelectItem value="gay">Gay</SelectItem>
+                <SelectItem value="lesbian">Lesbian</SelectItem>
+                <SelectItem value="pansexual">Pansexual</SelectItem>
+                <SelectItem value="asexual">Asexual</SelectItem>
             </SelectContent>
             </Select>
         </div>
@@ -98,6 +102,14 @@ export default function InputField({
             <SelectItem value="As long as you're happy">As long as you're happy</SelectItem>
             <SelectItem value="I really wanted it to be you">I really wanted it to be you</SelectItem>
             <SelectItem value="Still hoping">Still hoping</SelectItem>
+            <SelectItem value="Maybe in another lifetime">Maybe in another lifetime</SelectItem>
+            <SelectItem value="I miss what we never had">I miss what we never had</SelectItem>
+            <SelectItem value="I was ready, were you?">I was ready, were you?</SelectItem>
+            <SelectItem value="If only you knew">If only you knew</SelectItem>
+            <SelectItem value="Still choosing you silently">Still choosing you silently</SelectItem>
+            <SelectItem value="I wish I said it sooner">I wish I said it sooner</SelectItem>
+            <SelectItem value="You were my what if">You were my what if</SelectItem>
+            <SelectItem value="Maybe we met too early">Maybe we met too early</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -117,6 +129,7 @@ export default function InputField({
             <SelectItem value="mechanical engiyearning">Mechanical Engiyearning</SelectItem>
             <SelectItem value="hospitality & yearning management">Hospitality & Yearning Management</SelectItem>
             <SelectItem value="computer sayangs">Computer Sayangs</SelectItem>
+            <SelectItem value="criminology of torpe investigation">Criminology of Torpe Investigation</SelectItem>
           </SelectContent>
         </Select>
       </div>

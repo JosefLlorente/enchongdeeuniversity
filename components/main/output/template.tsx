@@ -82,7 +82,7 @@ export default function Template({ data }: { data: any }) {
                 {/* Right Section */}
                 <div className="w-full">
                     {/* Role Display & Logo*/}
-                    <div className="flex flex-row gap-12 items-center ">
+                    <div className="flex flex-row gap-20 items-center ">
                         <h1 className="text-3xl text-[#0A326D] font-bold">{data?.applyAs?.toUpperCase() || "STUDENT"} <br /> YEARNER</h1>
                         <Image src="/edu.svg" alt="Enchong Dee University Logo" width={120} height={120} />
                     </div>

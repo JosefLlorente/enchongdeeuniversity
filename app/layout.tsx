@@ -26,12 +26,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Enchong Dee University ID Generator",
+  title: "Enchong Dee University",
   description: "This is a fun and fictional project that allows you to create a personalized Enchong Dee University ID card. Simply fill in your details, upload a profile picture, and generate your own unique ID card. Perfect for fans of Enchong Dee and those who want to add a touch of creativity to their online presence. Please note that this project is purely for entertainment purposes and is not affiliated with any real institution.",
    robots: "index, follow",
    keywords: "student id card, id card generator, enchong dee, university, meme",
    openGraph: {
-      title: "Enchong Dee University ID Card Generator",
+      title: "Enchong Dee University",
       description: "Create your own Enchong Dee University student ID card",
       type: "website",
     },
