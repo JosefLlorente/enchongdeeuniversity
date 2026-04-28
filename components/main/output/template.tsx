@@ -34,6 +34,7 @@ export default function Template({ data }: { data: any }) {
     const year = new Date().getFullYear();
     const [imageSrc, setImageSrc] = useState<string>("/empty_profile.jpg");
     const [barcode] = useState<string>(generateBarcode());
+    const [ready, setReady] = useState(false)
 
     useEffect(() => {
         if (data?.profileImage) {
@@ -44,6 +45,16 @@ export default function Template({ data }: { data: any }) {
             reader.readAsDataURL(data.profileImage);
         }
     }, [data?.profileImage]);
+
+    useEffect(() => {
+    async function prep() {
+        if (document.fonts?.ready) {
+        await document.fonts.ready
+        }
+        setTimeout(() => setReady(true), 500)
+    }
+    prep()
+    }, [])
 
     return (
         <div className="bg-white flex flex-col rounded-xl shadow-md">
@@ -57,12 +68,11 @@ export default function Template({ data }: { data: any }) {
 
                     {/* Profile Image */}
                     <div className="relative w-80 h-80 overflow-hidden rounded-lg">
-                    <Image
+                        <img
                         src={imageSrc}
                         alt="Profile Image"
-                        fill
-                        className="object-cover"
-                    />
+                        className="object-cover w-full h-full"
+                        />
                     </div>
                     
                     {/* Role*/}
@@ -84,7 +94,12 @@ export default function Template({ data }: { data: any }) {
                     {/* Role Display & Logo*/}
                     <div className="flex flex-row gap-20 items-center ">
                         <h1 className="text-3xl text-[#0A326D] font-bold">{data?.applyAs?.toUpperCase() || "STUDENT"} <br /> YEARNER</h1>
-                        <Image src="/edu.svg" alt="Enchong Dee University Logo" width={120} height={120} />
+                        <img
+                        src="/edu.svg"
+                        alt="Enchong Dee University Logo"
+                        width="120"
+                        height="120"
+                        />
                     </div>
 
                     <h2 className="text-2xl font-bold text-[#0A326D] mt-5">{(data?.applyAs?.toUpperCase() || "STUDENT")} ID CARD</h2>
