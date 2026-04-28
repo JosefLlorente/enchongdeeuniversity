@@ -1,8 +1,8 @@
 "use client"
-import { useState, useEffect } from "react"
-import { useQRCode } from 'next-qrcode';
-import { useBarcode } from "next-barcode";
-import Image from "next/image"
+import { useState, useEffect, useRef } from "react"
+import { useQRCode } from "next-qrcode"
+import { useBarcode } from "next-barcode"
+import { domToPng } from "modern-screenshot"
 import { Geist } from "next/font/google"
 
 const geist = Geist({ subsets: ["latin"] })
@@ -24,112 +24,158 @@ function BarcodeComponent({ text }: { text: string }) {
 }
 
 function generateBarcode() {
-  const part1 = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-  const part2 = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
-  const part3 = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-  return `${part1}-${part2}-${part3}`;
+  const part1 = String(Math.floor(Math.random() * 100)).padStart(2, "0")
+  const part2 = String(Math.floor(Math.random() * 1000)).padStart(3, "0")
+  const part3 = String(Math.floor(Math.random() * 100)).padStart(2, "0")
+  return `${part1}-${part2}-${part3}`
 }
 
 export default function Template({ data }: { data: any }) {
-    const year = new Date().getFullYear();
-    const [imageSrc, setImageSrc] = useState<string>("/empty_profile.jpg");
-    const [barcode] = useState<string>(generateBarcode());
-    const [ready, setReady] = useState(false)
+  const year = new Date().getFullYear()
+  const [imageSrc, setImageSrc] = useState<string>("/empty_profile.jpg")
+  const [barcode] = useState<string>(generateBarcode())
+  const [ready, setReady] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        if (data?.profileImage) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageSrc(reader.result as string);
-            };
-            reader.readAsDataURL(data.profileImage);
-        }
-    }, [data?.profileImage]);
+  useEffect(() => {
+    if (data?.profileImage) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImageSrc(reader.result as string)
+      }
+      reader.readAsDataURL(data.profileImage)
+    }
+  }, [data?.profileImage])
 
-    useEffect(() => {
+  useEffect(() => {
     async function prep() {
-        if (document.fonts?.ready) {
+      if (document.fonts?.ready) {
         await document.fonts.ready
-        }
-        setTimeout(() => setReady(true), 500)
+      }
+      setTimeout(() => setReady(true), 500)
     }
     prep()
-    }, [])
+  }, [])
 
-    return (
-        <div className="bg-white flex flex-col rounded-xl shadow-md">
-            <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl [font-family:var(--font-crimson)]">
-                <h1>ENCHONG DEE UNIVERSITY</h1>
-            </header>
+    const handleDownload = async () => {
+    if (!cardRef.current) return
 
-            <main className="flex flex-row px-8 pt-10 pb-2 justify-between gap-8">
-                {/* Left Section */}
-                <div className="w-full">
+    const dataUrl = await domToPng(cardRef.current)
 
-                    {/* Profile Image */}
-                    <div className="relative w-80 h-80 overflow-hidden rounded-lg">
-                        <img
-                        src={imageSrc}
-                        alt="Profile Image"
-                        className="object-cover w-full h-full"
-                        />
-                    </div>
-                    
-                    {/* Role*/}
-                    <div className="bg-[#0A326D] text-white text-center pl-8 py-3 rounded-r-md mt-10 -ml-8 w-[calc(100%+2.5rem)]">
-                    <h1 className="text-3xl font-bold tracking-[3px]">
-                        {data?.applyAs?.toUpperCase() || "STUDENT"}
-                    </h1>
-                    </div>
+    const res = await fetch(dataUrl)
+    const blob = await res.blob()
 
-                    {/* ID Expiration */}
-                    <div className="text-center mt-5">
-                        <p className="text-xl mb-2">VALID UNTIL:</p>
-                        <h2 className="text-3xl font-black">MAKAUSAD</h2>
-                    </div>
-                </div>
+    const link = document.createElement("a")
+    link.download = "id-card.png"
+    link.href = URL.createObjectURL(blob)
+    link.click()
+    }
 
-                {/* Right Section */}
-                <div className="w-full">
-                    {/* Role Display & Logo*/}
-                    <div className="flex flex-row gap-20 items-center ">
-                        <h1 className="text-3xl text-[#0A326D] font-bold">{data?.applyAs?.toUpperCase() || "STUDENT"} <br /> YEARNER</h1>
-                        <img
-                        src="/edu.svg"
-                        alt="Enchong Dee University Logo"
-                        width="120"
-                        height="120"
-                        />
-                    </div>
+  return (
+    <div className="flex flex-col items-center gap-4">
+      {/* CARD */}
+      <div
+        ref={cardRef}
+        className="bg-white flex flex-col rounded-xl shadow-md"
+      >
+        <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl">
+          <h1>ENCHONG DEE UNIVERSITY</h1>
+        </header>
 
-                    <h2 className="text-2xl font-bold text-[#0A326D] mt-5">{(data?.applyAs?.toUpperCase() || "STUDENT")} ID CARD</h2>
-                    {/* ID Informationm */}
-                    <div className="flex flex-col gap-7 mt-5 text-[#0A326D]">
-                        <h2 className="font-black">NAME: {data?.name?.toUpperCase()}</h2>
-                        <h2 className="font-black">GENDER: {data?.gender?.toUpperCase()}</h2>
-                        <h2 className="font-black">STATUS: {data?.status?.toUpperCase()}</h2>
-                        <h2 className="font-black">
-                        {data?.applyAs === "student" ? "COURSE: " : "DEPARTMENT: "}
-                        {data?.program?.toUpperCase() || ""}
-                        </h2>
-                        <h2 className="font-black">ENROLLED SINCE: {year} </h2>
-                    </div>
+        <main className="flex flex-row px-8 pt-10 pb-2 justify-between gap-8">
+          {/* Left Section */}
+          <div className="w-full">
+            <div className="relative w-80 h-80 overflow-hidden rounded-lg">
+              <img
+                src={imageSrc}
+                alt="Profile Image"
+                className="object-cover w-full h-full"
+              />
+            </div>
 
-                    {/* QR Code & Barcode */}
-                    <div className="flex flex-row gap-7 -ml-3 -mb-4">
-                        <div className="w-24 h-24" style={{ transform: 'scale(0.8)', transformOrigin: 'left' }}>
-                            <QRComponent text={data?.profileLink || "N/A"} />
-                        </div>
-                        <div className="flex-1 overflow-hidden" style={{ transform: 'scale(0.8)', transformOrigin: 'left' }}>
-                            <BarcodeComponent text={barcode} />
-                        </div>
-                    </div>
-                </div>
-            </main>
+            <div className="bg-[#0A326D] text-white text-center pl-8 py-3 rounded-r-md mt-10 -ml-8 w-[calc(100%+2.5rem)]">
+              <h1 className="text-3xl font-bold tracking-[3px]">
+                {data?.applyAs?.toUpperCase() || "STUDENT"}
+              </h1>
+            </div>
 
-            <footer className="p-3 bg-[#0A326D] text-center text-white rounded-b-xl [font-family:var(--font-crimson)] text-2xl">
-                <p>"Time is the longest distance between two places." - Terrence Williams </p>
-            </footer>
-        </div>
-    )
+            <div className="text-center mt-5">
+              <p className="text-xl mb-2">VALID UNTIL:</p>
+              <h2 className="text-3xl font-black">MAKAUSAD</h2>
+            </div>
+          </div>
+
+          {/* Right Section */}
+          <div className="w-full">
+            <div className="flex flex-row gap-20 items-center">
+              <h1 className="text-3xl text-[#0A326D] font-bold">
+                {data?.applyAs?.toUpperCase() || "STUDENT"} <br /> YEARNER
+              </h1>
+              <img
+                src="/edu.svg"
+                alt="Logo"
+                width="120"
+                height="120"
+              />
+            </div>
+
+            <h2 className="text-2xl font-bold text-[#0A326D] mt-5">
+              {(data?.applyAs?.toUpperCase() || "STUDENT")} ID CARD
+            </h2>
+
+            <div className="flex flex-col gap-7 mt-5 text-[#0A326D]">
+              <h2 className="font-black">
+                NAME: {data?.name?.toUpperCase()}
+              </h2>
+              <h2 className="font-black">
+                GENDER: {data?.gender?.toUpperCase()}
+              </h2>
+              <h2 className="font-black">
+                STATUS: {data?.status?.toUpperCase()}
+              </h2>
+              <h2 className="font-black">
+                {data?.applyAs === "student"
+                  ? "COURSE: "
+                  : "DEPARTMENT: "}
+                {data?.program?.toUpperCase() || ""}
+              </h2>
+              <h2 className="font-black">
+                ENROLLED SINCE: {year}
+              </h2>
+            </div>
+
+            <div className="flex flex-row gap-7 -ml-3 -mb-4">
+              <div
+                className="w-24 h-24"
+                style={{ transform: "scale(0.8)", transformOrigin: "left" }}
+              >
+                <QRComponent text={data?.profileLink || "N/A"} />
+              </div>
+              <div
+                className="flex-1 overflow-hidden"
+                style={{ transform: "scale(0.8)", transformOrigin: "left" }}
+              >
+                <BarcodeComponent text={barcode} />
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <footer className="p-3 bg-[#0A326D] text-center text-white rounded-b-xl text-2xl">
+          <p>
+            "Time is the longest distance between two places." - Terrence
+            Williams
+          </p>
+        </footer>
+      </div>
+
+      {/* DOWNLOAD BUTTON */}
+      <button
+        onClick={handleDownload}
+        className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow"
+      >
+        Download ID as PNG
+      </button>
+    </div>
+  )
 }
