@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react"
 import { useQRCode } from "next-qrcode"
 import { useBarcode } from "next-barcode"
-import { toBlob } from "html-to-image"
+import { domToPng } from "modern-screenshot"
 
 function QRComponent({ text }: { text: string }) {
   const { Canvas } = useQRCode()
@@ -28,59 +28,11 @@ export interface TemplateHandle {
   download: () => Promise<void>
 }
 
-const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ data }, ref) {
+// Separate card content as a reusable component
+function CardContent({ data, imageSrc, barcode }: { data: any; imageSrc: string; barcode: string }) {
   const year = new Date().getFullYear()
-  const [imageSrc, setImageSrc] = useState<string>("/empty_profile.jpg")
-  const [barcode] = useState<string>(generateBarcode())
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (data?.profileImage) {
-      const reader = new FileReader()
-      reader.onloadend = () => setImageSrc(reader.result as string)
-      reader.readAsDataURL(data.profileImage)
-    }
-  }, [data?.profileImage])
-
-  useImperativeHandle(ref, () => ({
-    download: async () => {
-      if (!cardRef.current) return
-
-      const el = cardRef.current
-
-      const prevPosition = el.style.position
-      const prevTop = el.style.top
-      const prevLeft = el.style.left
-      const prevTransform = el.style.transform
-      const prevZIndex = el.style.zIndex
-
-      el.style.position = "fixed"
-      el.style.top = "-9999px"
-      el.style.left = "-9999px"
-      el.style.transform = "none"
-      el.style.zIndex = "-1"
-
-      await new Promise((r) => setTimeout(r, 100))
-
-      try {
-        const blob = await toBlob(el, { pixelRatio: 2, cacheBust: true })
-        if (!blob) return
-        const link = document.createElement("a")
-        link.download = "id-card.png"
-        link.href = URL.createObjectURL(blob)
-        link.click()
-      } finally {
-        el.style.position = prevPosition
-        el.style.top = prevTop
-        el.style.left = prevLeft
-        el.style.transform = prevTransform
-        el.style.zIndex = prevZIndex
-      }
-    },
-  }))
-
   return (
-    <div ref={cardRef} className="bg-white flex flex-col rounded-xl shadow-md">
+    <div className="bg-white flex flex-col rounded-xl shadow-md">
       <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl">
         <h1>ENCHONG DEE UNIVERSITY</h1>
       </header>
@@ -112,7 +64,7 @@ const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ d
           </div>
 
           <h2 className="text-2xl font-bold text-[#0A326D] mt-5">
-            {(data?.applyAs?.toUpperCase() || "STUDENT")} ID CARD
+            {data?.applyAs?.toUpperCase() || "STUDENT"} ID CARD
           </h2>
 
           <div className="flex flex-col gap-7 mt-5 text-[#0A326D]">
@@ -141,6 +93,57 @@ const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ d
         <p>"Time is the longest distance between two places." - Terrence Williams</p>
       </footer>
     </div>
+  )
+}
+
+const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ data }, ref) {
+  const [imageSrc, setImageSrc] = useState<string>("/empty_profile.jpg")
+  const [barcode] = useState<string>(generateBarcode())
+  const hiddenRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (data?.profileImage) {
+      const reader = new FileReader()
+      reader.onloadend = () => setImageSrc(reader.result as string)
+      reader.readAsDataURL(data.profileImage)
+    }
+  }, [data?.profileImage])
+
+  useImperativeHandle(ref, () => ({
+    download: async () => {
+      if (!hiddenRef.current) return
+      await new Promise((r) => setTimeout(r, 200))
+      try {
+        const dataUrl = await domToPng(hiddenRef.current, { scale: 2 })
+        const link = document.createElement("a")
+        link.download = "id-card.png"
+        link.href = dataUrl
+        link.click()
+      } catch (err) {
+        console.error("Download failed:", err)
+      }
+    },
+  }))
+
+  return (
+    <>
+      {/* Visible scaled preview */}
+      <CardContent data={data} imageSrc={imageSrc} barcode={barcode} />
+
+      {/* Hidden full-size copy used only for screenshotting */}
+      <div
+        ref={hiddenRef}
+        style={{
+          position: "fixed",
+          top: "-9999px",
+          left: "-9999px",
+          visibility: "hidden",
+          pointerEvents: "none",
+        }}
+      >
+        <CardContent data={data} imageSrc={imageSrc} barcode={barcode} />
+      </div>
+    </>
   )
 })
 
