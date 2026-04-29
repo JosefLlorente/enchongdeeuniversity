@@ -137,7 +137,7 @@ const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ d
           position: "fixed",
           top: "-9999px",
           left: "-9999px",
-          visibility: "hidden",
+          opacity: 0,
           pointerEvents: "none",
         }}
       >
