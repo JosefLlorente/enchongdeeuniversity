@@ -46,26 +46,40 @@ const Template = forwardRef<TemplateHandle, { data: any }>(function Template({ d
     download: async () => {
       if (!cardRef.current) return
 
-      // Temporarily override any CSS transform so the screenshot captures
-      // the card at its natural full size, not the scaled-down preview size
       const el = cardRef.current
-      const prev = el.style.transform
+
+      const prevPosition = el.style.position
+      const prevTop = el.style.top
+      const prevLeft = el.style.left
+      const prevTransform = el.style.transform
+      const prevZIndex = el.style.zIndex
+
+      el.style.position = "fixed"
+      el.style.top = "-9999px"
+      el.style.left = "-9999px"
       el.style.transform = "none"
+      el.style.zIndex = "-1"
 
-      const blob = await toBlob(el, { pixelRatio: 2, cacheBust: true })
+      await new Promise((r) => setTimeout(r, 100))
 
-      el.style.transform = prev
-
-      if (!blob) return
-      const link = document.createElement("a")
-      link.download = "id-card.png"
-      link.href = URL.createObjectURL(blob)
-      link.click()
+      try {
+        const blob = await toBlob(el, { pixelRatio: 2, cacheBust: true })
+        if (!blob) return
+        const link = document.createElement("a")
+        link.download = "id-card.png"
+        link.href = URL.createObjectURL(blob)
+        link.click()
+      } finally {
+        el.style.position = prevPosition
+        el.style.top = prevTop
+        el.style.left = prevLeft
+        el.style.transform = prevTransform
+        el.style.zIndex = prevZIndex
+      }
     },
   }))
 
   return (
-    // No download button here — controlled externally via ref
     <div ref={cardRef} className="bg-white flex flex-col rounded-xl shadow-md">
       <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl">
         <h1>ENCHONG DEE UNIVERSITY</h1>
