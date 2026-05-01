@@ -3,6 +3,10 @@ import { useState, useEffect, useRef } from "react"
 import { useQRCode } from "next-qrcode"
 import { useBarcode } from "next-barcode"
 import { domToPng } from "modern-screenshot"
+import { Download } from "lucide-react"
+import { Crimson_Text } from "next/font/google"
+
+const crimson = Crimson_Text({ subsets: ["latin"], weight: "400" })
 
 const FIELD_LABELS: Record<string, string> = {
   name: "NAME",
@@ -66,11 +70,21 @@ export default function Template({ data }: { data: any }) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 relative">
+      {/* Download Icon Overlay - Top Left (Outside cardRef so it's not exported) */}
+      <button
+        onClick={handleDownload}
+        className="absolute top-4 left-4 z-10 bg-[#0A326D] text-white p-2 rounded-lg hover:bg-blue-800 transition-colors"
+        title="Download ID as PNG"
+      >
+        <Download size={35} />
+      </button>
+
       {/* ── Everything inside cardRef gets captured ── */}
       <div ref={cardRef} className="bg-white flex flex-col rounded-xl shadow-md">
-        <header className="p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl">
-          <h1>ENCHONG DEE UNIVERSITY</h1>
+
+        <header className={`${crimson.className} p-5 bg-[#0A326D] text-3xl font-bold text-white text-center tracking-[10px] rounded-t-xl`}>
+          <h1 className="font-black">ENCHONG DEE UNIVERSITY</h1>
         </header>
 
         <main className="flex flex-row px-8 pt-10 pb-2 justify-between gap-8">
@@ -143,17 +157,10 @@ export default function Template({ data }: { data: any }) {
           </div>
         </main>
 
-        <footer className="p-3 bg-[#0A326D] text-center text-white rounded-b-xl text-2xl">
+        <footer className={`${crimson.className} p-3 bg-[#0A326D] text-center text-white rounded-b-xl text-2xl`}>
           <p>"Time is the longest distance between two places." - Terrence Williams</p>
         </footer>
       </div>
-
-      <button
-        onClick={handleDownload}
-        className="px-6 py-2 bg-blue-600 text-white rounded-lg shadow"
-      >
-        Download ID as PNG
-      </button>
     </div>
   )
 }
